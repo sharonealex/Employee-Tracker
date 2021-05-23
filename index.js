@@ -19,3 +19,12 @@ connection.connect((err)=>{
 if(err) throw err;
 init();
 })
+
+//get user inputs based on the list of options like view, add, delete, update etc.
+
+//based on the option invoke each function. - can use switch.
+
+//write out each functions independently. (later consider writing objects and classes.)
+
+
+
