@@ -14,6 +14,57 @@ const connection = mysql.createConnection({
     database: 'employee_DB'
 })
 
+
+const init = async ()=>{
+    try{
+        let userInput = await inquirer.prompt({
+            name: 'action',
+            type: 'list',
+            message: 'Welcome to employee database, what action would you like to perform',
+            choices: ['View all employees',
+            'View all departments',
+            'View all roles',
+            'Add an employee',
+            'Add a department',
+            'Add a role',
+            'Update employee role',
+            'Delete an employee',
+            'EXIT']
+        });
+        switch(userInput.action){
+            case 'View all employees':
+                getEmployees();
+                break;
+            case 'View all roles':
+                getRoles();
+                break;
+            case 'View all departments':
+                getDepartments();
+                break;    
+            case 'Add an employee':
+                addEmployee();
+                break;
+            case  'Add a department':
+                addDepartment();
+                break;
+            case 'Add a role':
+                addRole();
+                break;
+            case 'Update employee role':
+                updateRole();
+                break;
+            case  'Delete an employee':
+                deleteEmployee();
+                break;
+            case 'Exit':
+                connection.end();
+                break;        
+        };
+    } catch(err){
+        console.log(err)
+    }
+}
+
 //estabilish connection with database, on success initialise the application to start.
 connection.connect((err)=>{
 if(err) throw err;
