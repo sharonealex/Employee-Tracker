@@ -7,9 +7,9 @@ let connection;
 
 
 //create sql connection to database.
-const main = async ()=>{
+const main = async () => {
     console.log('11')
-     connection = await mysql.createConnection({
+    connection = await mysql.createConnection({
         host: 'localhost',
         port: 3306,
         user: 'root',
@@ -21,23 +21,23 @@ const main = async ()=>{
 
 
 
-const init = async ()=>{
-    try{
+const init = async () => {
+    try {
         let userInput = await inquirer.prompt({
             name: 'action',
             type: 'list',
             message: '###Welcome to employee database, what action would you like to perform###',
             choices: ['View all employees',
-            'View all departments',
-            'View all roles',
-            'Add an employee',
-            'Add a department',
-            'Add a role',
-            'Update employee role',
-            'Delete an employee',
-            'EXIT']
+                'View all departments',
+                'View all roles',
+                'Add an employee',
+                'Add a department',
+                'Add a role',
+                'Update employee role',
+                'Delete an employee',
+                'EXIT']
         });
-        switch(userInput.action){
+        switch (userInput.action) {
             case 'View all employees':
                 console.log('49')
                 getEmployees();
@@ -47,11 +47,11 @@ const init = async ()=>{
                 break;
             case 'View all departments':
                 getDepartments();
-                break;    
+                break;
             case 'Add an employee':
                 addEmployee();
                 break;
-            case  'Add a department':
+            case 'Add a department':
                 addDepartment();
                 break;
             case 'Add a role':
@@ -60,61 +60,55 @@ const init = async ()=>{
             case 'Update employee role':
                 updateRole();
                 break;
-            case  'Delete an employee':
+            case 'Delete an employee':
                 deleteEmployee();
                 break;
             case 'Exit':
                 connection.end();
-                break;        
+                break;
         };
-    } catch(err){
+    } catch (err) {
         console.log(err)
     }
 }
 
- const getEmployees = async ()=>{
-     try{
+const getEmployees = async () => {
+    try {
         const query = 'SELECT * FROM employees';
         const [rows, fields] = await connection.execute(query);
         console.table(rows);
         init();
-     } catch (err){
-         console.log(err);
-         init();
-     }    
+    } catch (err) {
+        console.log(err);
+        init();
+    }
 }
 
-const getDepartments = async()=>{
-    try{
+const getDepartments = async () => {
+    try {
         const query = 'select * from departments';
         const [rows, fields] = await connection.execute(query);
         console.table(rows);
         init();
     }
-    catch(err){
+    catch (err) {
         console.log(err);
         init();
     }
 };
 
-const getRoles = async()=>{
-    try{
+const getRoles = async () => {
+    try {
         const query = 'select * from roles';
         const [rows, fields] = await connection.execute(query);
         console.table(rows);
         init();
     }
-    catch(err){
+    catch (err) {
         console.log(err);
         init();
     }
 }
-
-
-
-
-
-
 
 main();
 
