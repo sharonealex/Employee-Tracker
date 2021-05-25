@@ -110,6 +110,56 @@ const getRoles = async () => {
     }
 }
 
+const addEmployee = async ()=>{
+    try{
+        const [roles, fields] = await connection.query('select * from roles')
+        const [managers, fields2] = await connection.query('select * from employees')
+       
+        const employeeData = await inquirer.prompt([
+            {
+                name: 'firstName',
+                type: 'input',
+                message: 'Please enter first name of employee'
+            },
+            {
+                name: 'lastName',
+                type: 'input',
+                message: 'Please enter last name of employee'
+            },
+            {
+                name: 'roleId',
+
+                type: 'list',
+                choices: roles.map((role) => {return {
+                    name: role.title, 
+                    value: role.id
+                }}),
+                message: "What is this Employee's role id?"
+            },
+            {
+                name: 'managerId',
+                type: 'list',
+                choices: managers.map((manager) => {
+                    return {
+                        name: manager.first_name + " " + manager.last_name,
+                        value: manager.id
+                    }
+                }),
+                message: "What is this Employee's Manager's name?"
+            }
+        ])
+        let result = await connection.query("INSERT INTO employees SET ?", {
+            first_name: employeeData.firstName,
+            last_name: employeeData.lastName,
+            role_id: employeeData.roleId,
+            manager_id: employeeData.managerId
+        });
+        init();
+    } catch(err){
+        console.log(err)
+    }
+}
+
 main();
 
 //get user inputs based on the list of options like view, add, delete, update etc.
