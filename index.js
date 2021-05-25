@@ -17,13 +17,6 @@ const main = async ()=>{
         database: 'employees_db'
     });
     init();
-    //estabilish connection with database, on success initialise the application to start.
-// connection.connect((err)=>{
-//     console.log('21')
-//     if(err) throw err;
-//     console.log('22')
-//     init();
-//     })
 }
 
 
@@ -94,11 +87,9 @@ const init = async ()=>{
 const getDepartments = async()=>{
     try{
         const query = 'select * from departments';
-        let result = await connection.query(query, (err, res)=>{
-            if (err) console.log(err);
-            console.table('*******All Roles***********', res);
-            init();
-        })
+        const [rows, fields] = await connection.execute(query);
+        console.table(rows);
+        init();
     }
     catch(err){
         console.log(err);
