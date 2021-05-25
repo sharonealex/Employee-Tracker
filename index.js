@@ -76,9 +76,22 @@ const init = async ()=>{
      } catch (err){
          console.log(err);
          init();
-     }
-    
-    
+     }   
+}
+
+const getDepartments = async()=>{
+    try{
+        const query = 'select * from departments';
+        connection.query(query, (err, res)=>{
+            if (err) console.log(err);
+            console.table('*******All Roles***********', res);
+            init();
+        })
+    }
+    catch(err){
+        console.log(err);
+        init();
+    }
 }
 
 
