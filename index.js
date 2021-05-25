@@ -97,8 +97,17 @@ const getDepartments = async()=>{
     }
 };
 
-const getRoles = ()=>{
-
+const getRoles = async()=>{
+    try{
+        const query = 'select * from roles';
+        const [rows, fields] = await connection.execute(query);
+        console.table(rows);
+        init();
+    }
+    catch(err){
+        console.log(err);
+        init();
+    }
 }
 
 
