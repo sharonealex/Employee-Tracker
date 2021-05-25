@@ -20,7 +20,7 @@ const init = async ()=>{
         let userInput = await inquirer.prompt({
             name: 'action',
             type: 'list',
-            message: 'Welcome to employee database, what action would you like to perform',
+            message: '###Welcome to employee database, what action would you like to perform###',
             choices: ['View all employees',
             'View all departments',
             'View all roles',
@@ -64,6 +64,24 @@ const init = async ()=>{
         console.log(err)
     }
 }
+
+ const getEmployees = async ()=>{
+     try{
+        const query = 'SELECT * FROM employees';
+        connection.query(query, (err, res)=>{
+            if(err) console.log(err);
+            console.table('*******All Employees********', res);
+            init();
+        });
+     } catch (err){
+         console.log(err);
+         init();
+     }
+    
+    
+}
+
+
 
 //estabilish connection with database, on success initialise the application to start.
 connection.connect((err)=>{
