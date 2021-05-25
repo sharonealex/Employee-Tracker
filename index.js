@@ -160,6 +160,56 @@ const addEmployee = async ()=>{
     }
 }
 
+const addDepartment = async ()=>{
+    const departmentData = await inquirer.prompt([
+        {
+            name: 'deptName',
+            type: 'input',
+            message: 'What is the name of your new department?'
+        }
+    ])
+    let result = await connection.query("insert into departments set?", {
+        department_name: departmentData.deptName
+    })
+    init();
+}
+
+const addRole = async ()=>{
+    const [departments, fields] = await connection.query('select * from departments')
+    //console.log(departments);
+    const roleData = await inquirer.prompt([
+        {
+            name: 'title',
+            type: 'input',
+            message: 'What is the name of your new role?'
+        },
+        {
+            name: 'salary',
+            type: 'input',
+            message: 'What salary will this role provide?'
+        },
+        {
+            name: 'departmentId',
+            type: 'list',
+            choices: departments.map((department) => {
+                //console.log(department)
+                return {
+                    name: department.department_name,
+                    value: department.id
+                }
+            }),
+            message: 'What department is this role associated with?',
+        }
+    ]);
+    let result = await connection.query("INSERT INTO roles SET ?", {
+        title: roleData.title,
+        salary: roleData.salary,
+        department_id: roleData.departmentId,
+    });
+    init();
+
+}
+
 main();
 
 //get user inputs based on the list of options like view, add, delete, update etc.
