@@ -1,18 +1,31 @@
 //dependencies
-const mysql = require('mysql');
+const mysql = require('mysql2/promise'); //using promise wrapper of mysql2
 const inquirer = require('inquirer')
 const consoleTable = require('console.table');
 const util = require('util') //with intention to promisify connection.query api.
+let connection;
 
 
 //create sql connection to database.
-const connection = mysql.createConnection({
-    host: 'localhost',
-    port: 3306,
-    user: 'root',
-    password: 'root',
-    database: 'employees_db'
-})
+const main = async ()=>{
+    console.log('11')
+     connection = await mysql.createConnection({
+        host: 'localhost',
+        port: 3306,
+        user: 'root',
+        password: 'root',
+        database: 'employees_db'
+    });
+    init();
+    //estabilish connection with database, on success initialise the application to start.
+// connection.connect((err)=>{
+//     console.log('21')
+//     if(err) throw err;
+//     console.log('22')
+//     init();
+//     })
+}
+
 
 
 const init = async ()=>{
@@ -33,6 +46,7 @@ const init = async ()=>{
         });
         switch(userInput.action){
             case 'View all employees':
+                console.log('49')
                 getEmployees();
                 break;
             case 'View all roles':
@@ -68,21 +82,19 @@ const init = async ()=>{
  const getEmployees = async ()=>{
      try{
         const query = 'SELECT * FROM employees';
-        connection.query(query, (err, res)=>{
-            if(err) console.log(err);
-            console.table('*******All Employees********', res);
-            init();
-        });
+        const [rows, fields] = await connection.execute(query);
+        console.table(rows);
+        init();
      } catch (err){
          console.log(err);
          init();
-     }   
+     }    
 }
 
 const getDepartments = async()=>{
     try{
         const query = 'select * from departments';
-        connection.query(query, (err, res)=>{
+        let result = await connection.query(query, (err, res)=>{
             if (err) console.log(err);
             console.table('*******All Roles***********', res);
             init();
@@ -92,15 +104,19 @@ const getDepartments = async()=>{
         console.log(err);
         init();
     }
+};
+
+const getRoles = ()=>{
+
 }
 
 
 
-//estabilish connection with database, on success initialise the application to start.
-connection.connect((err)=>{
-if(err) throw err;
-init();
-})
+
+
+
+
+main();
 
 //get user inputs based on the list of options like view, add, delete, update etc.
 
