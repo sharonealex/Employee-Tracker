@@ -2,7 +2,8 @@
 const mysql = require('mysql2/promise'); //using promise wrapper of mysql2
 const inquirer = require('inquirer')
 const consoleTable = require('console.table');
-const util = require('util') //with intention to promisify connection.query api.
+const util = require('util'); //with intention to promisify connection.query api.
+const { listenerCount } = require('events');
 let connection;
 
 
@@ -58,7 +59,7 @@ const init = async () => {
                 addRole();
                 break;
             case 'Update employee role':
-                updateRole();
+                updateEmployeeRole();
                 break;
             case 'Delete an employee':
                 deleteEmployee();
@@ -226,6 +227,50 @@ const addRole = async ()=>{
         salary: roleData.salary,
         department_id: roleData.departmentId,
     });
+    init();
+
+}
+
+const updateEmployeeRole = async()=>{  //point to a different role id.
+    let [employees, fields] = await connection.query("select * from employees");
+    console.table(employees)
+
+    let selectedEmployee = await inquirer.prompt([
+        {
+            name: 'employeeName',
+            type: 'list' ,
+            choices: employees.map((emp)=>{
+                return {
+                    name: emp.first_name + ' ' + emp.last_name,
+                    value: emp.id
+                }
+            }),
+            message: 'please choose an employee to update role?' 
+        }
+    ]);
+
+    let  [roles, fields2] = await connection.query("select * from roles");
+
+    let selectedRole = await inquirer.prompt([
+        {
+            name: 'roleTitle',
+            type: 'list',
+            choices: roles.map((role)=>{
+                return {
+                    name: role.title,
+                    value:role.id
+                }
+            }),
+            message: 'please choose the new role to be updated'
+        }
+    ])
+
+    let result = await connection.query("UPDATE employees SET ? WHERE ?", 
+    [
+     { role_id: selectedRole.roleTitle }, 
+     { id: selectedEmployee.employeeName }
+    ]);
+    console.log('role was updated successfully')
     init();
 
 }
