@@ -103,14 +103,25 @@ const getDepartments = async () => {
     catch (err) {
         console.log(err);
         init();
+
     }
 };
 
 const getRoles = async () => {
     try {
-        const query = 'select * from roles';
+        const query = 'select ' +
+                        'r.id as RoleID, ' +
+                        'r.title as Title, '+
+                        'r.salary as Salary, '+
+                        'd.department_name as Department '+
+                        'from '+
+                        'employees_db.roles as r '+
+                        'inner join employees_db.departments as d on r.department_id=d.id';
+
         const [rows, fields] = await connection.execute(query);
+        console.log('------------------------------------------------------------------------------')
         console.table(rows);
+        console.log('------------------------------------------------------------------------------')
         init();
     }
     catch (err) {
