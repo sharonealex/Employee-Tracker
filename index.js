@@ -35,6 +35,8 @@ const init = async () => {
                 'Add a department',
                 'Add a role',
                 'Update employee role',
+                'Update employee manager',
+                'View employees by manager',
                 'Delete an employee',
                 'EXIT']
         });
@@ -61,6 +63,12 @@ const init = async () => {
             case 'Update employee role':
                 updateEmployeeRole();
                 break;
+            case 'Update employee manager':
+                updateEmployeeManager();
+                break;  
+            case 'View employees by manager':
+                viewEmployeesByManager();
+                break;        
             case 'Delete an employee':
                 deleteEmployee();
                 break;
@@ -120,9 +128,7 @@ const getRoles = async () => {
                         'inner join employees_db.departments as d on r.department_id=d.id';
 
         const [rows, fields] = await connection.execute(query);
-        console.log('------------------------------------------------------------------------------')
         console.table(rows);
-        console.log('------------------------------------------------------------------------------')
         init();
     }
     catch (err) {
@@ -273,6 +279,63 @@ const updateEmployeeRole = async()=>{  //point to a different role id.
     console.log('role was updated successfully')
     init();
 
+}
+
+const updateEmployeeManager = async ()=>{
+    let [employees, fields] = await connection.query("select * from employees");
+
+    let selectedEmployee = await inquirer.prompt([
+        {
+            name: 'employeeName',
+            type: 'list' ,
+            choices: employees.map((emp)=>{
+                return {
+                    name: emp.first_name + ' ' + emp.last_name,
+                    value: emp.id
+                }
+            }),
+            message: 'please choose an employee to update their manager?' 
+        }
+    ]);
+
+    let  [managers, fields2] = await connection.query("select * from employees");
+
+    let selectedManager = await inquirer.prompt([
+        {
+            name: 'manager',
+            type: 'list',
+            choices: managers.map((manager)=>{
+                return {
+                    name: manager.first_name+ ' ' + manager.last_name,
+                    value: manager.id
+                }
+            }),
+            message: 'please choose the new manager to be updated'
+        }
+    ])
+
+    let result = await connection.query("UPDATE employees SET ? WHERE ?", 
+    [
+     { manager_id: selectedManager.manager }, 
+     { id: selectedEmployee.employeeName }
+    ]);
+    console.log('manager was updated successfully')
+    init();
+}
+
+const viewEmployeesByManager = async()=>{
+    
+    let query = 'SELECT ' +
+                   ' e.id as Employee_ID, '+
+                    'concat(e.first_name , " " , e.last_name) as Employee_Name, '+
+                    'concat(m.first_name , " " , m.last_name) as Manager_Name '+
+                    'FROM ' +
+                    'employees_db.employees as e, employees_db.employees as m ' +
+                    'where e.manager_id=m.id;'
+
+    const [rows, fields] = await connection.execute(query);
+    console.table(rows);
+    init();                
 }
 
 main();
