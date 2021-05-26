@@ -74,7 +74,16 @@ const init = async () => {
 
 const getEmployees = async () => {
     try {
-        const query = 'SELECT * FROM employees';
+        const query = 'select ' +
+        'e.id as EmployeeID, ' +
+        'concat(e.first_name , " " , e.last_name) as Name, ' +
+        'r.title as Role, ' +
+        'r.salary as Salary, ' +
+        'd.department_name as Department ' +
+        'from ' +
+        '((employees_db.employees as e ' +
+        'inner join employees_db.roles as r on e.role_id=r.id) ' +
+        'inner join employees_db.departments as d on r.department_id=d.id);' 
         const [rows, fields] = await connection.execute(query);
         console.table(rows);
         init();
