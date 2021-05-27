@@ -32,7 +32,7 @@ Open  terminal and change into the correct path. Run "node index.js" and you wil
 
 Design the following database schema containing three tables:
 
-![Database Schema](Assets/schema.png)
+![Database Schema](assets/images/schema.png)
 
 * **department**:
 
