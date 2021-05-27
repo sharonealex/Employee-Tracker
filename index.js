@@ -112,7 +112,7 @@ const getEmployees = async () => {
 
 const getDepartments = async () => {
     try {
-        const query = 'select * from departments';
+        const query = '"SELECT department.id, department.department_name, SUM(employee_role.salary) AS utilized_budget FROM employee LEFT JOIN employee_role on employee.role_id = employee_role.id LEFT JOIN department on employee_role.department_id = department.id GROUP BY department.id, department.department_name;';
         const [rows, fields] = await connection.execute(query);
         console.table(rows);
         init();
