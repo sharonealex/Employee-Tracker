@@ -15,7 +15,8 @@ create table roles (
     title varchar(30) not null,
     salary decimal(10,0) not null,
     department_id int,
-    primary key (id)
+    primary key (id),
+    foreign key (department_id) references departments(id),
 );
 
 create table employees (
@@ -24,6 +25,13 @@ create table employees (
     last_name varchar(30) not null,
     role_id int not null,
     manager_id int not null,
-    primary key (id)
+    primary key (id),
+    foreign key (role_id) references roles(id),
+    fk_employee foreign key (id) references employees(id)
 )
+
+ALTER TABLE employees ADD CONSTRAINT fk_employee 
+    FOREIGN KEY (manager_id) REFERENCES employees(id);
+
+
 
