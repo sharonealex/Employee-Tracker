@@ -2,14 +2,11 @@
 const mysql = require('mysql2/promise'); //using promise wrapper of mysql2
 const inquirer = require('inquirer')
 const consoleTable = require('console.table');
-const util = require('util'); //with intention to promisify connection.query api.
-const { listenerCount } = require('events');
 let connection;
 
 
 //create sql connection to database.
 const main = async () => {
-    console.log('11')
     connection = await mysql.createConnection({
         host: 'localhost',
         port: 3306,
@@ -44,7 +41,7 @@ const init = async () => {
         });
         switch (userInput.action) {
             case 'View all employees':
-                console.log('49')
+              
                 getEmployees();
                 break;
             case 'View all roles':
@@ -217,7 +214,6 @@ const addDepartment = async () => {
 
 const addRole = async () => {
     const [departments, fields] = await connection.query('select * from departments')
-    //console.log(departments);
     const roleData = await inquirer.prompt([
         {
             name: 'title',
@@ -233,7 +229,6 @@ const addRole = async () => {
             name: 'departmentId',
             type: 'list',
             choices: departments.map((department) => {
-                //console.log(department)
                 return {
                     name: department.department_name,
                     value: department.id
@@ -253,7 +248,6 @@ const addRole = async () => {
 
 const updateEmployeeRole = async () => {  //point to a different role id.
     let [employees, fields] = await connection.query("select * from employees");
-    console.table(employees)
 
     let selectedEmployee = await inquirer.prompt([
         {
@@ -355,7 +349,6 @@ const viewEmployeesByManager = async () => {
 
 const deleteEmployees = async () => {
     let [deleteEmployeesList, fields2] = await connection.query("select * from employees");
-    console.log(deleteEmployeesList)
     try {
         let selectedEmployees = await inquirer
             .prompt([
@@ -364,7 +357,7 @@ const deleteEmployees = async () => {
                     type: "checkbox",
                     message: "Choose all the employees to be deleted:",
                     choices: deleteEmployeesList.map((emp) => {
-                        console.log(emp)
+                
                         return {
                             name: emp.first_name + ' ' + emp.last_name,
                             value: emp.id
@@ -374,16 +367,15 @@ const deleteEmployees = async () => {
             ])
 
         let empIds = selectedEmployees.employees.join(',');
-        console.log('DELETE FROM employees WHERE id IN (' + empIds + ')')
+       
         let result = await connection.query('DELETE FROM employees WHERE id IN (' + empIds + ')');
         init();
     } catch (err) {
         console.log({
             errorCode: err.code,
             errorMessage: err.sqlMessage,
-            errDescription: 'Cannont delete employee as he is a manager'
+            errDescription: 'Update other employees manager and then retry to delete this employee.'
         })
-        console.log('****ACTION:Update other employees manager and then retry to delete this employee.')
         init()
     }
 }
@@ -391,7 +383,7 @@ const deleteEmployees = async () => {
 const deleteRoles = async () => {
     try {
         let [deleteRolesList, fields2] = await connection.query("select * from roles");
-        console.log(deleteRolesList)
+      
         let selectedRoles = await inquirer
             .prompt([
                 {
