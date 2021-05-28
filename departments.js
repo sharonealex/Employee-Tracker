@@ -11,9 +11,9 @@ const inquirer = require('inquirer')
     try {
         const query = 'SELECT * from departments'
         const [rows, fields] = await connection.execute(query);
-        console.log('#############################################')
+        console.log('###############################################')
         console.log('############### DEPARTMENTS TABLE #############')
-        console.log('#############################################')
+        console.log('###############################################')
         console.table(rows);
         init();
     }
@@ -37,9 +37,9 @@ const getDepartmentsBudgetUtlization = async (connection, init) => {
             'JOIN departments d ON d.id = r.department_id ' +
             'GROUP BY d.department_name;'
         const [rows, fields] = await connection.execute(query);
-        console.log('#############################################')
+        console.log('############################################################')
         console.log('############### DEPARTMENTS BUDGET UTILIZATION #############')
-        console.log('#############################################')
+        console.log('############################################################')
         console.table(rows);
         init();
     }

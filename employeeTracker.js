@@ -37,6 +37,7 @@ const init = async () => {
             choices: ['View all employees',
                 'View all departments',
                 'View all roles',
+                'View departments budget utilization',
                 'Add an employee',
                 'Add a department',
                 'Add a role',
