@@ -79,6 +79,9 @@ const init = async () => {
             case 'View all departments':
                 departments.getDepartments(connection, init);
                 break;
+            case 'View departments budget utilization':
+                departments.getDepartmentsBudgetUtlization(connection, init);
+                break;
             case 'Add a department':
                 departments.addDepartment(connection, init);
                 break;

@@ -8,9 +8,7 @@ The solution of this application is designed using node.js, inquirer package and
 
 ## Demo
 
-Link for display : 
-
-## Deployment
+Link for display : https://drive.google.com/file/d/1QEwalLyVTi78FGoviqjWZAuKTs3f9zZH/view
 
 ## User Story
 
