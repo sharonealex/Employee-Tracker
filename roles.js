@@ -1,5 +1,10 @@
 const inquirer = require('inquirer')
 
+/**
+ * Function to view all the roles in the company across departments
+ * @param {*} connection 
+ * @param {*} init 
+ */
 const getRoles = async (connection, init) => {
     try {
         const query = 'select ' +
@@ -26,6 +31,11 @@ const getRoles = async (connection, init) => {
     }
 }
 
+/**
+ * Function to add a new role to an existing department
+ * @param {*} connection 
+ * @param {*} init 
+ */
 const addRole = async (connection, init) => {
     const [departments, fields] = await connection.query('select * from departments')
     const roleData = await inquirer.prompt([
@@ -59,6 +69,11 @@ const addRole = async (connection, init) => {
     init();
 }
 
+/**
+ * Function to delete an existing role based on user choice.
+ * @param {*} connection 
+ * @param {*} init 
+ */
 const deleteRoles = async (connection, init) => {
     try {
         let [deleteRolesList, fields2] = await connection.query("select * from roles");

@@ -10,7 +10,9 @@ let connection;
 
 
 
-//create sql connection to database.
+/**
+ * Function to estabilish database connection 
+ */
 const main = async () => {
     connection = await mysql.createConnection({
         host: 'localhost',
@@ -22,7 +24,9 @@ const main = async () => {
     init();
 }
 
-
+/**
+ * Function that initialises the application and allow user actions based on prompts.
+ */
 
 const init = async () => {
     try {

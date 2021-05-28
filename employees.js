@@ -1,6 +1,11 @@
 
 const inquirer = require('inquirer')
 
+/**
+ * Function to view all employee details in the org.
+ * @param {} connection 
+ * @param {*} init 
+ */
 const getEmployees = async (connection, init) => {
     try {
         const query = 'select ' +
@@ -28,7 +33,11 @@ const getEmployees = async (connection, init) => {
     }
 }
 
-
+/**
+ * Function to add employee to the existing employee database
+ * @param {} connection 
+ * @param {*} init 
+ */
 const addEmployee = async (connection, init) =>{
     try {
         const [roles, fields] = await connection.query('select * from roles')
@@ -82,6 +91,11 @@ const addEmployee = async (connection, init) =>{
 
 }
 
+/**
+ * Function to update employee role to another exisiting role
+ * @param {F} connection 
+ * @param {*} init 
+ */
 const updateEmployeeRole = async (connection, init) => {  //point to a different role id.
     let [employees, fields] = await connection.query("select * from employees");
 
@@ -125,6 +139,11 @@ const updateEmployeeRole = async (connection, init) => {  //point to a different
 
 }
 
+/**
+ * Function to update an employees manager name.
+ * @param {} connection 
+ * @param {*} init 
+ */
 const updateEmployeeManager = async (connection, init) => {
     let [employees, fields] = await connection.query("select * from employees");
 
@@ -167,6 +186,11 @@ const updateEmployeeManager = async (connection, init) => {
     init();
 }
 
+/**
+ * Function to view all employees by their manager
+ * @param {*} connection 
+ * @param {*} init 
+ */
 const viewEmployeesByManager = async (connection, init) => {
     let query = 'SELECT ' +
         ' e.id as Employee_ID, ' +
@@ -181,6 +205,11 @@ const viewEmployeesByManager = async (connection, init) => {
     init();
 }
 
+/**
+ * Function to delete empployees based on user selected prompt.
+ * @param {} connection 
+ * @param {*} init 
+ */
 const deleteEmployees = async (connection, init) => {
     let [deleteEmployeesList, fields2] = await connection.query("select * from employees");
     try {
