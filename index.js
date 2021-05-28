@@ -76,10 +76,10 @@ const init = async () => {
                 break;
             case 'Delete roles':
                 deleteRoles();
-                break;  
+                break;
             case 'Delete departments':
                 deleteDepartments();
-                break;        
+                break;
             case 'Exit':
                 connection.end();
                 break;
@@ -112,7 +112,11 @@ const getEmployees = async () => {
 
 const getDepartments = async () => {
     try {
-        const query = '"SELECT department.id, department.department_name, SUM(employee_role.salary) AS utilized_budget FROM employee LEFT JOIN employee_role on employee.role_id = employee_role.id LEFT JOIN department on employee_role.department_id = department.id GROUP BY department.id, department.department_name;';
+        const query = 'SELECT  d.id,  d.department_name, SUM(salary) as utilized_budget ' +
+            'FROM employees e ' +
+            'JOIN roles r ON e.role_id = r.Id ' +
+            'JOIN departments d ON d.id = r.department_id ' +
+            'GROUP BY d.department_name;'
         const [rows, fields] = await connection.execute(query);
         console.table(rows);
         init();
@@ -335,13 +339,14 @@ const updateEmployeeManager = async () => {
 
 const viewEmployeesByManager = async () => {
 
+
     let query = 'SELECT ' +
         ' e.id as Employee_ID, ' +
         'concat(e.first_name , " " , e.last_name) as Employee_Name, ' +
         'concat(m.first_name , " " , m.last_name) as Manager_Name ' +
         'FROM ' +
-        'employees_db.employees as e, employees_db.employees as m ' +
-        'where e.manager_id=m.id;'
+        'employees_db.employees as e ' +
+        'left join employees_db.employees as m on e.manager_id=m.id;'
 
     const [rows, fields] = await connection.execute(query);
     console.table(rows);
@@ -351,27 +356,28 @@ const viewEmployeesByManager = async () => {
 const deleteEmployees = async () => {
     let [deleteEmployeesList, fields2] = await connection.query("select * from employees");
     console.log(deleteEmployeesList)
-    try{ let selectedEmployees = await inquirer
-        .prompt([
-            {
-                name: "employees",
-                type: "checkbox",
-                message: "Choose all the employees to be deleted:",
-                choices: deleteEmployeesList.map((emp) => {
-                    console.log(emp)
-                    return {
-                        name: emp.first_name + ' ' + emp.last_name,
-                        value: emp.id
-                    }
-                }),
-            },
-        ])
-   
+    try {
+        let selectedEmployees = await inquirer
+            .prompt([
+                {
+                    name: "employees",
+                    type: "checkbox",
+                    message: "Choose all the employees to be deleted:",
+                    choices: deleteEmployeesList.map((emp) => {
+                        console.log(emp)
+                        return {
+                            name: emp.first_name + ' ' + emp.last_name,
+                            value: emp.id
+                        }
+                    }),
+                },
+            ])
+
         let empIds = selectedEmployees.employees.join(',');
-        console.log('DELETE FROM employees WHERE id IN ('+ empIds +')')
-        let result = await connection.query('DELETE FROM employees WHERE id IN ('+ empIds +')');   
-        init(); 
-    } catch(err){
+        console.log('DELETE FROM employees WHERE id IN (' + empIds + ')')
+        let result = await connection.query('DELETE FROM employees WHERE id IN (' + empIds + ')');
+        init();
+    } catch (err) {
         console.log({
             errorCode: err.code,
             errorMessage: err.sqlMessage,
@@ -382,84 +388,73 @@ const deleteEmployees = async () => {
     }
 }
 
-const deleteRoles = async ()=>{
-    try{
+const deleteRoles = async () => {
+    try {
         let [deleteRolesList, fields2] = await connection.query("select * from roles");
         console.log(deleteRolesList)
         let selectedRoles = await inquirer
-        .prompt([
-            {
-                name: "roles",
-                type: "checkbox",
-                message: "Choose all the roles to be deleted:",
-                choices: deleteRolesList.map((role) => {
-                    return {
-                        name: role.title,
-                        value: role.id
-                    }
-                }),
-            },
-        ])
-        console.log("399", selectedRoles.roles)
+            .prompt([
+                {
+                    name: "roles",
+                    type: "checkbox",
+                    message: "Choose all the roles to be deleted:",
+                    choices: deleteRolesList.map((role) => {
+                        return {
+                            name: role.title,
+                            value: role.id
+                        }
+                    }),
+                },
+            ])
         let roleIds = selectedRoles.roles.join(',');
-        console.log('DELETE FROM roles WHERE id IN ('+ roleIds +')')
-        let result = await connection.query('DELETE FROM roles WHERE id IN ('+ roleIds +')');   
-        init(); 
-    
-    } catch(err){
+        let result = await connection.query('DELETE FROM roles WHERE id IN (' + roleIds + ')');
+        init();
+
+    } catch (err) {
         console.log({
             errorCode: err.code,
             errorMessage: err.sqlMessage,
-            errDescription: 'Cannont delete role as it is referenced by employees'
+            errDescription: '****ACTION:Update  employees roles to a different one ,retry to delete this role.'
         })
-        console.log('****ACTION:Update  employees roles to a different one ,retry to delete this role.')
         init()
     }
-   
+
 }
 
-const deleteDepartments = async ()=>{
-    try{
+const deleteDepartments = async () => {
+    try {
         let [deleteDepartmentsList, fields2] = await connection.query("select * from departments");
         let selectedDepartments = await inquirer
-        .prompt([
-            {
-                name: "departments",
-                type: "checkbox",
-                message: "Choose all the departments to be deleted:",
-                choices: deleteDepartmentsList.map((dept) => {
-                    return {
-                        name: dept.department_name,
-                        value: dept.id
-                    }
-                }),
-            },
-        ])
-        
+            .prompt([
+                {
+                    name: "departments",
+                    type: "checkbox",
+                    message: "Choose all the departments to be deleted:",
+                    choices: deleteDepartmentsList.map((dept) => {
+                        return {
+                            name: dept.department_name,
+                            value: dept.id
+                        }
+                    }),
+                },
+            ])
+
         let deptIds = selectedDepartments.departments.join(',');
-        console.log('DELETE FROM departments WHERE id IN ('+ deptIds +')')
-        let result = await connection.query('DELETE FROM departments WHERE id IN ('+ deptIds +')');   
-        init(); 
-    
-    } catch(err){
+        let result = await connection.query('DELETE FROM departments WHERE id IN (' + deptIds + ')');
+        init();
+
+    } catch (err) {
         console.log({
             errorCode: err.code,
             errorMessage: err.sqlMessage,
-            errDescription: 'Cannont delete dept as it is referenced by roles'
+            errDescription: '****ACTION:Update  employees roles to a different one ,retry to delete this dept.'
         })
-        console.log('****ACTION:Update  employees roles to a different one ,retry to delete this dept.')
         init()
     }
-   
+
 }
 
 main();
-
-//get user inputs based on the list of options like view, add, delete, update etc.
-
-//based on the option invoke each function. - can use switch.
-
-//write out each functions independently. (later consider writing objects and classes.)
 
 
 
