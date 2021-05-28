@@ -16,7 +16,7 @@ create table roles (
     salary decimal(10,0) not null,
     department_id int,
     primary key (id),
-    foreign key (department_id) references departments(id),
+    foreign key (department_id) references departments(id)
 );
 
 create table employees (
@@ -26,9 +26,8 @@ create table employees (
     role_id int not null,
     manager_id int not null,
     primary key (id),
-    foreign key (role_id) references roles(id),
-    fk_employee foreign key (id) references employees(id)
-)
+    foreign key (role_id) references roles(id)
+);
 
 ALTER TABLE employees ADD CONSTRAINT fk_employee 
     FOREIGN KEY (manager_id) REFERENCES employees(id);
